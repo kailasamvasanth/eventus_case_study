@@ -1,0 +1,14 @@
+version: 2
+
+models:
+  - name: stg_cms_utilization
+    description: "Silver layer: Cleaned and standardized 2023 CMS Physician data."
+    columns:
+      - name: hcpcs_cd
+        description: "The medical procedure code (e.g., G0439)."
+        tests:
+          - not_null
+      - name: tot_bene_day_srvcs
+        description: "Total number of services provided. Coalesced to 0 if null."
+        tests:
+          - not_null

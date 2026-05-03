@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: cms
+    description: "Medicare Physician & Other Practitioners - by Geography and Service."
+    database: CMS     
+    schema: PHYSICIANDATA   
+    tables:
+      - name: MEDICARE_SERVICES_2023
+        description: "Aggregated state-level data for provider services."
