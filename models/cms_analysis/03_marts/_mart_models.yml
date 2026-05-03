@@ -24,19 +24,28 @@ models:
                 values: ['Wellness', 'LTC Routine', 'ALF Routine']
 
   - name: fct_cms_utilization
-    description: "The central fact table containing quantitative utilization metrics."
+    description: "State-level summary of AWV Penetration Rates, comparing preventative wellness visits to routine LTC/ALF encounters."
     columns:
       - name: geo_key
         tests:
           - not_null
+          - unique
           - relationships:
               arguments:
                 to: ref('dim_geography')
                 field: geo_key
-      - name: hcpcs_key
+
+      - name: awv_volume
+        description: "Count of Wellness services (G0438, G0439)."
         tests:
           - not_null
-          - relationships:
-              arguments:
-                to: ref('dim_hcpcs')
-                field: hcpcs_key
+
+      - name: ltc_encounters
+        description: "Count of routine encounters (99307-99310, 99347-99350)."
+        tests:
+          - not_null
+
+      - name: awv_penetration_rate
+        description: "The ratio of AWV services to LTC encounters. Higher values indicate a stronger preventative care mindset."
+        tests:
+          - not_null
