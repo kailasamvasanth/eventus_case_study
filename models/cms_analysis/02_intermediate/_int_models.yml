@@ -8,21 +8,23 @@ models:
         description: "The name of the State. Filtered to exclude National/Foreign aggregates."
         tests:
           - not_null
-          # A custom test to ensure your geography filter worked
           - accepted_values:
-              values: ['National', 'Unknown', 'Foreign Country']
-              quote: true
-              # We expect these to be GONE, so we set the severity to fail if found
-              severity: error
+              # Arguments go here
+              arguments:
+                values: ['National', 'Unknown', 'Foreign Country']
+                quote: true
+              # Settings like where/severity go here
               config:
                 where: "state_name in ('National', 'Unknown', 'Foreign Country')"
+                severity: error
 
       - name: service_category
         description: "The classification of the HCPCS code: Wellness, LTC Routine, or ALF Routine."
         tests:
           - not_null
           - accepted_values:
-              values: ['Wellness', 'LTC Routine', 'ALF Routine']
+              arguments:
+                values: ['Wellness', 'LTC Routine', 'ALF Routine']
 
       - name: tot_bene_day_srvcs
         description: "The volume of services. Filtered to be greater than 0."
