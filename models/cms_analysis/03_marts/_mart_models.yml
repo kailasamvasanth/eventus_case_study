@@ -1,0 +1,56 @@
+version: 2
+
+models:
+  - name: dim_geography
+    description: "The primary dimension for geographic analysis. Each row represents a unique US State or Territory."
+    columns:
+      - name: geo_key
+        description: "Primary Key: MD5 hash of the state name. Used to join to the fact table."
+        tests:
+          - unique
+          - not_null
+      - name: state_name
+        description: "The full name of the state (e.g., Florida, North Carolina)."
+        tests:
+          - not_null
+
+  - name: dim_hcpcs
+    description: "The dimension for medical procedure codes and their specific place-of-service classifications."
+    columns:
+      - name: hcpcs_key
+        description: "Primary Key: MD5 hash of HCPCS Code and Place of Service. Ensures uniqueness at the grain of the service location."
+        tests:
+          - unique
+          - not_null
+      - name: hcpcs_cd
+        description: "The 5-digit HCPCS/CPT medical procedure code."
+        tests:
+          - not_null
+      - name: service_category
+        description: "The business-defined classification: Wellness, LTC Routine, or ALF Routine."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Wellness', 'LTC Routine', 'ALF Routine']
+
+  - name: fct_cms_utilization
+    description: "The central fact table containing quantitative utilization metrics for the 2023 Medicare dataset."
+    columns:
+      - name: geo_key
+        description: "Foreign Key: Links to dim_geography."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_geography')
+              field: geo_key
+      - name: hcpcs_key
+        description: "Foreign Key: Links to dim_hcpcs."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_hcpcs')
+              field: hcpcs_key
+      - name: tot_bene_day_srvcs
+        description: "The total number of unique beneficiary-days for the specific service/location combination."
+        tests:
+          - not_null

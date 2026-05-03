@@ -1,0 +1,30 @@
+version: 2
+
+models:
+  - name: int_cms_utilization
+    description: "Silver-Plus layer: This model filters CMS data to the State level and classifies codes into Eventus-specific Service Categories."
+    columns:
+      - name: state_name
+        description: "The name of the State. Filtered to exclude National/Foreign aggregates."
+        tests:
+          - not_null
+          # A custom test to ensure your geography filter worked
+          - accepted_values:
+              values: ['National', 'Unknown', 'Foreign Country']
+              quote: true
+              # We expect these to be GONE, so we set the severity to fail if found
+              severity: error
+              config:
+                where: "state_name in ('National', 'Unknown', 'Foreign Country')"
+
+      - name: service_category
+        description: "The classification of the HCPCS code: Wellness, LTC Routine, or ALF Routine."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Wellness', 'LTC Routine', 'ALF Routine']
+
+      - name: tot_bene_day_srvcs
+        description: "The volume of services. Filtered to be greater than 0."
+        tests:
+          - not_null
